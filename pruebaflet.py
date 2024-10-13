@@ -112,6 +112,22 @@ def main(page: ft.Page):
         actions=[ft.ElevatedButton(text="Join chat", on_click=join_chat_click)],
         actions_alignment=ft.MainAxisAlignment.END,
     )
+=======
+    # # Dialog for user to enter name
+    # join_user_name = ft.TextField(
+    #     label="Enter your name to join the chat",
+    #     autofocus=True,
+    #     on_submit=join_chat_click,
+    # )
+    # page.dialog = ft.AlertDialog(
+    #     open=True,
+    #     modal=True,
+    #     title=ft.Text("Welcome!"),
+    #     content=ft.Column([join_user_name], width=300, height=70, tight=True),
+    #     actions=[ft.ElevatedButton(text="Join chat", on_click=join_chat_click)],
+    #     actions_alignment=ft.MainAxisAlignment.END,
+    # )
+>>>>>>> Stashed changes
 
     # Chat messages
     chat = ft.ListView(

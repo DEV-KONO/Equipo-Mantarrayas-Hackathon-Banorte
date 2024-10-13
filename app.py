@@ -3,6 +3,8 @@ import flet as ft
 def main(page: ft.Page):
     page.title = "Ejemplo de inicialización con transición"
     page.bgcolor = "#FA1C28"
+    page.window.width=400
+    page.window.height=730
 
     # Pantalla de inicio que sirve para iniciar el proyecto
     img_local = ft.Image(
