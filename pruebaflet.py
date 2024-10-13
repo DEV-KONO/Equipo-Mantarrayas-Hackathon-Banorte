@@ -1,5 +1,6 @@
 import flet as ft
 
+
 class Message:
     def __init__(self, user_name: str, text: str, message_type: str):
         self.user_name = user_name
@@ -28,7 +29,10 @@ class ChatMessage(ft.Row):
         ]
 
     def get_initials(self, user_name: str):
-        return user_name[:1].capitalize() if user_name else "U"
+        if user_name:
+            return user_name[:1].capitalize()
+        else:
+            return "Unknown"  # or any default value you prefer
 
     def get_avatar_color(self, user_name: str):
         colors_lookup = [
@@ -50,9 +54,9 @@ class ChatMessage(ft.Row):
 
 
 def main(page: ft.Page):
+    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
     page.title = "Flet Chat"
 
-    # Handler for joining chat
     def join_chat_click(e):
         if not join_user_name.value:
             join_user_name.error_text = "Name cannot be blank!"
@@ -70,7 +74,6 @@ def main(page: ft.Page):
             )
             page.update()
 
-    # Handler for sending messages
     def send_message_click(e):
         if new_message.value != "":
             page.pubsub.send_all(
@@ -84,7 +87,6 @@ def main(page: ft.Page):
             new_message.focus()
             page.update()
 
-    # Message listener
     def on_message(message: Message):
         if message.message_type == "chat_message":
             m = ChatMessage(message)
@@ -95,7 +97,7 @@ def main(page: ft.Page):
 
     page.pubsub.subscribe(on_message)
 
-    # Dialog for user to enter name
+    # A dialog asking for a user display name
     join_user_name = ft.TextField(
         label="Enter your name to join the chat",
         autofocus=True,
@@ -117,7 +119,7 @@ def main(page: ft.Page):
         auto_scroll=True,
     )
 
-    # New message input
+    # A new message entry form
     new_message = ft.TextField(
         hint_text="Write a message...",
         autofocus=True,
@@ -129,39 +131,26 @@ def main(page: ft.Page):
         on_submit=send_message_click,
     )
 
-    # Top header bar
-    header = ft.Container(
-        content=ft.Row(
-            [
-                ft.Text("Norti", size=24, color="white", weight=ft.FontWeight.BOLD),
-                ft.TextButton("Regresar", on_click=lambda e: print("Regresar")),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+    # Add everything to the page
+    page.add(
+        ft.Container(
+            content=chat,
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=5,
+            padding=10,
+            expand=True,
         ),
-        padding=ft.padding.all(10),
-        bgcolor="red",
+        ft.Row(
+            [
+                new_message,
+                ft.IconButton(
+                    icon=ft.icons.SEND_ROUNDED,
+                    tooltip="Send message",
+                    on_click=send_message_click,
+                ),
+            ]
+        ),
     )
 
-    # Main page layout
-    page.add(
-        ft.Column(
-            [
-                header,
-                ft.Divider(height=5, color="white"),
-                chat,
-                new_message,
-            ],
-            expand=True,
-        )
-    )
-    animated_switcher = ft.AnimatedSwitcher(
-        main,
-        transition=ft.AnimatedSwitcherTransition.FADE,
-        duration=1000,
-        reverse_duration=500,
-    )
-    page.add(animated_switcher)
 
 ft.app(target=main)
-
-
