@@ -76,6 +76,19 @@ async def login(user_log: Schema_User_Login):
     else:
         return {"error": True, "msg": f"Incorrect Password"}
     
+@app.get("/all_hist")
+async def all_hist(mail: Schema_User_Mail):
+    mail_dump = mail.model_dump()
+
+    hist_query = session.query(Chat_History).filter_by(user_mail=mail_dump["mail"]).all()
+
+    json_list = []
+
+    for hist in hist_query:
+        json_list.append(str(hist.json_entry))
+
+    return json_list
+    
 @app.get("/gemini_call")
 async def gemini_call(message: Schema_User_Message):
     msg_dump = message.model_dump()
