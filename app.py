@@ -205,8 +205,8 @@ def main(page: ft.Page):
                                             ft.Text("Tarjeta Digital", size=14),
                                             ft.Icon(ft.icons.PHONE_ANDROID, size=50),
                                             ft.Text("Token Celular", size=14),
-                                            ft.Icon(ft.icons.LEADERBOARD, size=50),
-                                            ft.IconButton("Educacion Financiera", size=14),
+                                            ft.IconButton(ft.icons.WORK,on_click=lambda e: show_estudio_screen()),
+                                            ft.Text("Educacion Fin", size=14),
                                         ],
                                         alignment=ft.MainAxisAlignment.CENTER,
                                     ),
@@ -250,11 +250,10 @@ def main(page: ft.Page):
     )
     chat_screen = ft.Container(
         content=ft.Column(
-            [
-                
+            [              
                 ft.Row(
                     [
-                        ft.Text("KIDS", size=24, color="white", weight=ft.FontWeight.BOLD),
+                        ft.Text("Norti", size=24, color="white", weight=ft.FontWeight.BOLD),
                         ft.TextButton("Regresar", on_click=lambda e: show_home_screen(), style=ft.ButtonStyle(color="white")),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -317,6 +316,100 @@ def main(page: ft.Page):
             colors=["#FA1C28", "#CF1420"],
         ),
     )
+    estudio_screen = ft.Container(
+            content=ft.Column(
+            controls=[
+                
+                ft.Row(
+                    [
+                        ft.Text("Proceso de Estudio", size=24, weight="bold", color="white"),
+                        ft.Icon(ft.icons.WORK, size=30, color="white"),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    spacing=20,
+                ),    
+                ft.Row(
+                    [
+                        ft.Column(
+                            controls=[
+                                ft.Container(
+                                    content=ft.Text("Nivel 1", size=18, weight="bold", color="white"),
+                                    padding=10,
+                                    bgcolor="#4A90E2",
+                                    border_radius=10,
+                                ),
+                                ft.Container(
+                                    content=ft.Text("Descripción del Nivel 1", color="white"),
+                                    padding=10,
+                                    bgcolor="#4A90E2",
+                                    border_radius=10,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                        ft.Column(
+                            controls=[
+                                ft.Container(
+                                    content=ft.Text("Nivel 2", size=18, weight="bold", color="white"),
+                                    padding=10,
+                                    bgcolor="#50E3C2",
+                                    border_radius=10,
+                                ),
+                                ft.Container(
+                                    content=ft.Text("Descripción del Nivel 2", color="white"),
+                                    padding=10,
+                                    bgcolor="#50E3C2",
+                                    border_radius=10,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                        ft.Column(
+                            controls=[
+                                ft.Container(
+                                    content=ft.Text("Nivel 3", size=18, weight="bold", color="white"),
+                                    padding=10,
+                                    bgcolor="#F5A623",
+                                    border_radius=10,
+                                ),
+                                ft.Container(
+                                    content=ft.Text("Descripción del Nivel 3", color="white"),
+                                    padding=10,
+                                    bgcolor="#F5A623",
+                                    border_radius=10,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                    spacing=20,
+                ),
+      
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Progreso de Estudio", size=20, weight="bold", color="white"),
+                            ft.Text("70% Completado", color="white"),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    padding=20,
+                    bgcolor="#2E2E2E",
+                    border_radius=10,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.START,
+            spacing=20,
+        ),
+        width=page.width,
+        height=page.height,
+        gradient=ft.LinearGradient(
+            begin=ft.alignment.center_left,
+            end=ft.alignment.center_right,
+            colors=["#FA1C28", "#CF1420"],
+        ),
+    )
 
     # Animación para cambiar las pantallas
     animated_switcher = ft.AnimatedSwitcher(
@@ -344,6 +437,11 @@ def main(page: ft.Page):
     # Esta es la del chat 1
     def show_chat_screen():
         animated_switcher.content = chat_screen
+        animated_switcher.update()
+
+    # Y esta procede ser a la escuela financiera
+    def show_estudio_screen():
+        animated_switcher.content = estudio_screen
         animated_switcher.update()
 
     page.add(animated_switcher)
