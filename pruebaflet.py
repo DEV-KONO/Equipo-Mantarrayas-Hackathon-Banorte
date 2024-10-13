@@ -97,6 +97,7 @@ def main(page: ft.Page):
 
     page.pubsub.subscribe(on_message)
 
+<<<<<<< Updated upstream
     # A dialog asking for a user display name
     join_user_name = ft.TextField(
         label="Enter your name to join the chat",
