@@ -17,4 +17,4 @@ Y los niveles de estudio
 
 ## Ejecutar
 
-Se instala flet y se descarga
+Para ejecutar el codigo correctamente primero en una terminal se tendrá que iniciar el servidor con el siguiente comando "uvicorn backend:app --reload", despues en otra terminal, se tendrá que correr el siguiente comando "python .\pruebaflet.py"
