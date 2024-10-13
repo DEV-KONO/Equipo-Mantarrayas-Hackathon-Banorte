@@ -201,7 +201,12 @@ def main(page: ft.Page):
             end=ft.alignment.center_right,
             colors=["#FA1C28", "#CF1420"], 
         ),
+        
+        
+
+
     )
+    
 
     # Animación para cambiar las pantallas
     animated_switcher = ft.AnimatedSwitcher(
