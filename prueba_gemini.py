@@ -2,10 +2,16 @@ import base64
 import datetime
 import vertexai
 import json
-from vertexai.generative_models import GenerativeModel, SafetySetting, Part
+from vertexai.generative_models import GenerativeModel, SafetySetting
+# from google.cloud import firestore
 
 
 def multiturn_generate_content():
+    # db = firestore.Client()
+    # doc_ref = db.collection(u'users').document(u'ikn7Zk0pR09moAdoJti1').collection(u'history')
+    # doc_ref.set({
+    #     u''
+    # })
     vertexai.init(project="gcp-banorte-hackaton-team-8", location="us-central1")
     model = GenerativeModel(
         "gemini-1.5-flash-002",
@@ -15,7 +21,7 @@ def multiturn_generate_content():
 
     initial_call = json.loads(chat.send_message(["""Iniciemos con los problemas, repite Hola Usuario, vamos a iniciar con las preuguntas, y escribe la pregunta invitando al usuario a que conteste """], generation_config=generation_config, safety_settings=safety_settings ).candidates[0].content.parts[0].text.replace("```", "").replace("json", ""))
 
-    print(initial_call["message"])
+    print(initial_call)
 
     while True:
         ans = input("Ingrese la respuesta: ")
