@@ -10,11 +10,9 @@ class Schema_User_Message(BaseModel):
 
 class Schema_User_Login(BaseModel):
     mail: str
-    username: str
     password: str
 
 class Schema_User_Register(BaseModel):
     mail: str
-    username: str
     password: str
     conf_pass: str

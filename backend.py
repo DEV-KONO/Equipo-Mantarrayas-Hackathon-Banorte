@@ -31,8 +31,6 @@ async def register(user_reg: Schema_User_Register):
 
     mail = reg_dump["mail"]
 
-    user = reg_dump["username"]
-
     password = reg_dump["password"]
 
     conf_pass = reg_dump["conf_pass"]
@@ -43,7 +41,7 @@ async def register(user_reg: Schema_User_Register):
             "msg" : "Las contraseñas no coinciden"
         }
     else:
-        new_user = Users(mail=mail, username=user, password=password)
+        new_user = Users(mail=mail, password=password)
 
         session.add(new_user)
         session.commit()
@@ -56,7 +54,7 @@ async def register(user_reg: Schema_User_Register):
 
         return {
             "error" : False,
-            "msg" : f"Usuario {user} Creado Correctamente"
+            "msg" : f"Usuario {mail} Creado Correctamente"
         }
     
 @app.post("/login")
@@ -65,14 +63,12 @@ async def login(user_log: Schema_User_Login):
 
     mail = log_dump["mail"]
 
-    user = log_dump["username"]
-
     password = log_dump["password"]
 
     log_query = session.query(Users).filter_by(mail=mail).one_or_none()
 
     if log_query.password == password:
-        return {"error": False, "msg": f"User {user} logged in correctly"}
+        return {"error": False, "msg": f"User {mail} logged in correctly"}
     else:
         return {"error": True, "msg": f"Incorrect Password"}
     

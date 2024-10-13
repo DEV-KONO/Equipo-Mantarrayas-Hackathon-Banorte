@@ -1,5 +1,14 @@
+import json
+from arrow import get
 import flet as ft
+from httpx import request
+import requests
+import os
+import dotenv
 
+dotenv.load_dotenv()
+
+URL = os.getenv("URL")
 
 class Message:
     def __init__(self, user_name: str, text: str, message_type: str):
@@ -58,21 +67,54 @@ def main(page: ft.Page):
     page.title = "Flet Chat"
 
     def join_chat_click(e):
-        if not join_user_name.value:
-            join_user_name.error_text = "Name cannot be blank!"
+        login_req = requests.post(f"{URL}login", json={"mail": join_user_name.value, "password" : contraseña.value})
+        try:
+            if not login_req.json()["error"]:
+                r = requests.get(f"{URL}all_hist", json={"mail": join_user_name.value }) #todo llamar toda la historia del correo especificado
+                print((r.json()))
+
+                if not join_user_name.value:
+                    join_user_name.error_text = "Name cannot be blank!"
+                    join_user_name.update()
+                else:
+                    page.session.set("user_name", join_user_name.value)
+                    page.dialog.open = False
+                    new_message.prefix = ft.Text(f"{join_user_name.value}: ")
+                    page.pubsub.send_all(
+                        Message(
+                            user_name=join_user_name.value,
+                            text=f"{join_user_name.value} has joined the chat.",
+                            message_type="login_message",
+                        )
+                    )
+                    for req in r.json():
+                        rj = json.loads(req.replace("\'", "\""))
+
+                        if len(rj["message"]) > 150:
+                            for i in range(0,len(rj["message"])//150):
+                                rj["message"] = rj["message"][:150*(i+1)] + "\n" + rj["message"][150*(i+1):]
+
+                        if rj["role"] == "user":
+                            page.pubsub.send_all(
+                                Message(
+                                    user_name=join_user_name.value,
+                                    text=rj["message"],
+                                    message_type="chat_message"
+                                )
+                            )
+                        else:
+                            page.pubsub.send_all(
+                                Message(
+                                    user_name="Norty",
+                                    text=rj["message"],
+                                    message_type="chat_message"
+                                )
+                            )
+
+                    page.update()
+        except:
+            join_user_name.error_text = "Usuario o contraseña incorrectos"
             join_user_name.update()
-        else:
-            page.session.set("user_name", join_user_name.value)
-            page.dialog.open = False
-            new_message.prefix = ft.Text(f"{join_user_name.value}: ")
-            page.pubsub.send_all(
-                Message(
-                    user_name=join_user_name.value,
-                    text=f"{join_user_name.value} has joined the chat.",
-                    message_type="login_message",
-                )
-            )
-            page.update()
 
     def send_message_click(e):
         if new_message.value != "":
@@ -83,6 +125,23 @@ def main(page: ft.Page):
                     message_type="chat_message",
                 )
             )
+
+            r = requests.get(f"{URL}gemini_call", json={"mail":page.session.get("user_name"), "message":new_message.value})
+            print(r.json())
+            
+            rj = r.json()
+
+            if len(rj["message"]) > 150:
+                rj["message"] = rj["message"][:150] + "\n" + rj["message"][150:]
+
+            page.pubsub.send_all(
+                Message(
+                    user_name="Norty",
+                    text=rj["message"],
+                    message_type="chat_message"
+                )
+            )
+
             new_message.value = ""
             new_message.focus()
             page.update()
@@ -97,37 +156,38 @@ def main(page: ft.Page):
 
     page.pubsub.subscribe(on_message)
 
-<<<<<<< Updated upstream
     # A dialog asking for a user display name
     join_user_name = ft.TextField(
-        label="Enter your name to join the chat",
+        label="Correo",
         autofocus=True,
         on_submit=join_chat_click,
     )
+
+    contraseña = ft.TextField(
+        label="Contraseña",
+        width=280,
+        border_color="gray",
+        keyboard_type=ft.KeyboardType.TEXT,
+        helper_text="Mínimo 6 caracteres",
+        password=True,
+    )
+
     page.dialog = ft.AlertDialog(
         open=True,
         modal=True,
         title=ft.Text("Welcome!"),
-        content=ft.Column([join_user_name], width=300, height=70, tight=True),
-        actions=[ft.ElevatedButton(text="Join chat", on_click=join_chat_click)],
-        actions_alignment=ft.MainAxisAlignment.END,
+        content=ft.Container(
+                    content=ft.Column(
+                        [
+                            join_user_name,
+                            contraseña,
+                            ft.ElevatedButton("Aceptar", color="white", bgcolor="red",on_click=join_chat_click),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+        ),
+        # content=ft.Column([join_user_name], width=300, height=70, tight=True),
     )
-=======
-    # # Dialog for user to enter name
-    # join_user_name = ft.TextField(
-    #     label="Enter your name to join the chat",
-    #     autofocus=True,
-    #     on_submit=join_chat_click,
-    # )
-    # page.dialog = ft.AlertDialog(
-    #     open=True,
-    #     modal=True,
-    #     title=ft.Text("Welcome!"),
-    #     content=ft.Column([join_user_name], width=300, height=70, tight=True),
-    #     actions=[ft.ElevatedButton(text="Join chat", on_click=join_chat_click)],
-    #     actions_alignment=ft.MainAxisAlignment.END,
-    # )
->>>>>>> Stashed changes
 
     # Chat messages
     chat = ft.ListView(
